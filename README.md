@@ -1,1 +1,1 @@
-# nginx
+# Configurações do nginx para aprodução
