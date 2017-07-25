@@ -1,1 +1,1 @@
-# Configurações do nginx para aprodução
+# Configurações do nginx para produção
