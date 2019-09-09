@@ -1,0 +1,107 @@
+server {
+  listen 80;
+  server_name vod.img.estaticos.tv.br static-vod.globosat.tv;
+
+  access_log  /var/log/nginx/vod-plataforma-video-acc.log;
+  error_log   /var/log/nginx/vod-plataforma-video-err.log error;
+
+  root /www/projects/python/vod-plataforma-video;
+
+  add_header 'Access-Control-Allow-Origin' '*';
+
+  location ~ ^/static/(.*)$ {
+    alias /www/projects/python/vod-plataforma-video/static/$1;
+    allow all;
+  }
+
+  location ~ ^/uploaded/(.*)$ {
+    alias /www/projects/python/vod-plataforma-video/media/$1;
+    allow all;
+  }
+
+  location ~ ^/static/uploaded/(.*)$ {
+    alias /www/projects/python/vod-plataforma-video/media/$1;
+    allow all;
+  }
+
+  location /clientaccesspolicy.xml {
+    alias /www/projects/python/vod-plataforma-video/core/templates/clientaccesspolicy.xml;
+    allow all;
+  }
+
+  location /crossdomain.xml {
+    alias /www/projects/python/vod-plataforma-video/core/templates/crossdomain.xml;
+    allow all;
+  }
+
+  location ~ ^/grappelli/(.*)$ {
+    alias /www/projects/python/vod-api-rest-django/static/grappelli/$1;
+    allow all;
+  }
+  
+  location ~ ^/rest_framework_swagger/(.*)$ {
+    alias /www/projects/python/vod-api-rest-django/static/rest_framework_swagger/$1;
+    allow all;
+  }
+
+  location ~ ^/media/globosat-educacao/(.*)$ {
+    alias /www/projects/python/vod-api-rest-django/media_globosat-educacao/globosat-educacao/$1;
+    allow all;
+  }
+
+  location ~ ^/media/cache/globosat-educacao/(.*)$ {
+    alias /www/projects/python/vod-api-rest-django/media_globosat-educacao/cache/globosat-educacao/$1;
+    allow all;
+  }
+
+  location ~ ^/media/globosat-play/(.*)$ {
+    alias /www/projects/python/vod-api-rest-django/media_globosat-play/globosat-play/$1;
+    allow all;
+  }
+
+  location ~ ^/media/cache/globosat-play/(.*)$ {
+    alias /www/projects/python/vod-api-rest-django/media_globosat-play/cache/globosat-play/$1;
+    allow all;
+  }
+
+  location ~ ^/media/philos-play/(.*)$ {
+    alias /www/projects/python/vod-api-rest-django/media_philos-play/philos-play/$1;
+    allow all;
+  }
+
+  location ~ ^/media/cache/philos-play/(.*)$ {
+    alias /www/projects/python/vod-api-rest-django/media_philos-play/cache/philos-play/$1;
+    allow all;
+  }
+
+  location ~ ^/media/futura-play/(.*)$ {
+    alias /www/projects/python/vod-api-rest-django/media_futura-play/futura-play/$1;
+    allow all;
+  }
+
+  location ~ ^/media/cache/futura-play/(.*)$ {
+    alias /www/projects/python/vod-api-rest-django/media_futura-play/cache/futura-play/$1;
+    allow all;
+  }
+
+  location ~ ^/media/telecine-play/(.*)$ {
+    alias /www/projects/python/vod-api-rest-django/media_telecine-play/telecine-play/$1;
+    allow all;
+  }
+
+  location ~ ^/media/cache/telecine-play/(.*)$ {
+    alias /www/projects/python/vod-api-rest-django/media_telecine-play/cache/telecine-play/$1;
+    allow all;
+  }
+
+  location ~ ^/media/(.*)$ {
+    alias /www/projects/python/vod-plataforma-video/media/$1;
+    allow all;
+    if ($request_method = OPTIONS ) {
+        add_header Access-Control-Allow-Methods "GET, OPTIONS";
+        add_header Content-Length 0;
+        add_header Content-Type text/plain;
+        return 204;
+    }
+  }
+}

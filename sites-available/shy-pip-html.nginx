@@ -1,0 +1,9 @@
+server {
+    listen 80;
+    server_name premio.sexyhot.com.br;
+
+    access_log	/var/log/nginx/shy-pip-html-acc.log;
+    error_log   /var/log/nginx/shy-pip-html-err.log error;
+
+    root /www/projects/html/shy-pip-html/pip2018/dist;
+}

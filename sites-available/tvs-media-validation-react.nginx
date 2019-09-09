@@ -1,0 +1,19 @@
+server {
+  listen 80;
+  server_name tvs-media-validation.globosat.tv;
+
+  access_log  /var/log/nginx/tvs-media-validation-react-acc.log;
+  error_log   /var/log/nginx/tvs-media-validation-react-err.log error;
+
+  location / {
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host tvs-media-validation-react.gcloud.globoi.com;
+    proxy_redirect off;
+    proxy_buffering on;
+    proxy_pass_header ETag;
+    proxy_connect_timeout 600s;
+    proxy_read_timeout 600s;
+    proxy_pass http://tvs-media-validation-react.gcloud.globoi.com;
+    expires 60s;
+  }
+}

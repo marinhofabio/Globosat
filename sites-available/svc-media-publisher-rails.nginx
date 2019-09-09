@@ -1,0 +1,29 @@
+server {
+  listen 80;
+  server_name media-publisher.globosat.tv;
+
+  access_log  /var/log/nginx/svc-media-publisher-rails-acc.log;
+  error_log   /var/log/nginx/svc-media-publisher-rails-err.log error;
+
+  root /www/projects/ruby/svc-media-publisher-rails;
+
+  location / {
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host $http_host;
+    proxy_redirect off;
+    proxy_buffering on;
+    proxy_connect_timeout 60s;
+    proxy_read_timeout 60s;
+    proxy_pass http://gsatapp.globoi.com:8093;
+    expires 60s;
+  }
+
+  location ~ ^/assets/(.*)$ {
+    alias /www/projects/ruby/svc-media-publisher-rails/public/assets/$1;
+    allow all;
+  }
+
+  location ^~ /admin {
+    return 404;
+  }
+}

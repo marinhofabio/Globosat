@@ -1,0 +1,87 @@
+server {
+  listen 80;
+  server_name telecine.globo.com;
+
+  if ($http_user_agent ~ WordPress) { return 444; }
+  access_log  /var/log/nginx/tc-django-acc.log;
+  error_log   /var/log/nginx/tc-django-err.log error;
+
+  root /www/projects/python/tc-django;
+
+  location / {
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host $http_host;
+    proxy_redirect off;
+    proxy_buffering on;
+    proxy_connect_timeout 30s;
+    proxy_read_timeout 300s;
+    proxy_pass http://gsatapp.globoi.com:8030;
+  }
+
+  location ~ ^/parceiros/(.*)$ {
+    alias /www/projects/python/tc-django/static/parceiros/$1;
+    allow all;
+  }
+
+  location ~ ^/static/(.*)$ {
+    alias /www/projects/python/tc-django/static/$1;
+    allow all;
+  }
+
+  location ~ ^/media/(.*)$ {
+    alias /www/projects/python/tc-django/media_files/$1;
+    allow all;
+  }
+
+  location /robots.txt {
+    alias /www/projects/python/tc-django/robots.prod.txt;
+  }
+
+  location /clientaccesspolicy.xml {
+    alias /www/projects/python/tc-django/clientaccesspolicy.xml;
+  }
+
+  location ^~ /admin/ { # restrict access to admin section
+    return 404;
+  }
+
+ location /assine    {
+    return 301 http://assine.telecineplay.com.br/?utm_source=telecine-play&utm_campaign=assine&utm_medium=botao-home&utm_content=assine;
+  }
+
+  add_header 'Access-Control-Allow-Origin' '*';
+}
+
+server {
+  listen 80;
+  server_name telecine.estaticos.tv.br;
+
+  access_log  /var/log/nginx/tc-django-acc.log;
+  error_log   /var/log/nginx/tc-django-err.log error;
+
+  root /www/projects/python/tc-django/static;
+
+  location ~ ^/(.*)$ {
+    alias /www/projects/python/tc-django/static/$1;
+    allow all;
+  }
+  add_header 'Access-Control-Allow-Origin' '*';
+}
+
+server {
+  listen 80;
+  server_name telecine.img.estaticos.tv.br;
+
+  access_log  /var/log/nginx/tc-django-acc.log;
+  error_log   /var/log/nginx/tc-django-err.log error;
+
+  root /www/projects/python/tc-django/media_files;
+
+  location ~ ^/(.*)$ {
+    alias /www/projects/python/tc-django/media_files/$1;
+    allow all;
+
+  }
+
+  add_header 'Access-Control-Allow-Origin' '*';
+}

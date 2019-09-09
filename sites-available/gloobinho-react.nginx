@@ -1,0 +1,13 @@
+server {
+  listen 80;
+  server_name gloobinho.globo.com;
+
+  access_log  /var/log/nginx/gloobinho-react-acc.log access;
+  error_log   /var/log/nginx/gloobinho-react-err.log error;
+
+  root /www/projects/html/gloobinho-react/build/;
+
+  location / {
+    try_files $uri $uri/ /index.html;
+  }
+}

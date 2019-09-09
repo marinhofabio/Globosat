@@ -1,0 +1,37 @@
+server {
+    listen 80;
+    server_name assine-premierefc.globo.com assinepremiere.globo.com assinepremiere.globosat.tv;
+
+    access_log /var/log/nginx/assine-premierefc-html-acc.log;
+    error_log /var/log/nginx/assine-premierefc-html-err.log error;
+
+    add_header Vary X-Forwarded-Proto;
+
+    if ($http_x_forwarded_proto != 'https') {
+        return 301 https://$host$request_uri;
+    }
+
+    location / {
+        expires @1h;
+        proxy_pass http://assine-premierefc-html.gcloud.globoi.com;
+    }
+}
+
+server {
+    listen 80;
+    server_name especiais.premierefc.globo.com;
+
+    access_log /var/log/nginx/assine-premierefc-html-acc.log;
+    error_log /var/log/nginx/assine-premierefc-html-err.log error;
+
+    rewrite ^/landing-clubes(.*)$ $1 permanent;
+
+    location / {
+        expires @1h;
+        proxy_pass http://assine-premierefc-html.gcloud.globoi.com;
+    }
+
+    location /seutime {
+        return 301 http://seutime-premiere.globo.com/seutime/;
+    }
+}

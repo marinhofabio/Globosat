@@ -1,0 +1,101 @@
+server {
+  listen 80;
+  server_name philos.tv;
+
+  access_log /var/log/nginx/phl-play-vod-django-acc.log;
+  error_log  /var/log/nginx/phl-play-vod-django-err.log error;
+
+  root /www/projects/python/phl-play-vod-django;
+
+  add_header Vary X-Forwarded-Proto;
+
+  if ($http_x_forwarded_proto != 'https') {
+    return 301 https://$host$request_uri;
+  }
+
+  location / {
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host $http_host;
+    proxy_hide_header X-Frame-Options;
+    proxy_redirect off;
+    proxy_buffering on;
+    proxy_connect_timeout 30s;
+    proxy_read_timeout 30s;
+    expires 0;
+    proxy_hide_header Vary;
+    proxy_pass http://gsatapp.globoi.com:8040;
+  }
+
+  location ~ ^/static/(.*)$ {
+    alias /www/projects/python/phl-play-vod-django/static/$1;
+    allow all;
+  }
+
+  location ~ ^/media/(.*)$ {
+    alias /www/projects/python/phl-play-vod-django/media/$1;
+    allow all;
+  }
+
+  location /robots.txt {
+    alias /www/projects/python/phl-play-vod-django/robots.prod.txt;
+  }
+
+  location /clientaccesspolicy.xml {
+    alias /www/projects/python/phl-play-vod-django/clientaccesspolicy.xml;
+  }
+
+  location ^~ /admin/ { # restrict access to admin section
+    return 404;
+  }
+
+  add_header 'Access-Control-Allow-Origin' '*';
+
+  include /etc/nginx/python-conf.d/rewrite/philos.rewrite.conf;
+}
+
+# configuracoes para o site de estaticos #
+server {
+  listen 80;
+  server_name static.philos.tv;
+
+  access_log /var/log/nginx/phl-play-vod-django-acc.log;
+  error_log   /var/log/nginx/phl-play-vod-django-err.log error;
+
+  root /www/projects/python/phl-play-vod-django/static;
+
+  location ~ ^/(.*)$ {
+      alias /www/projects/python/phl-play-vod-django/static/$1;
+      allow all;
+  }
+  add_header 'Access-Control-Allow-Origin' '*';
+}
+
+# configuracoes para o site de media #
+server {
+  listen 80;
+  server_name media.philos.tv;
+
+  access_log /var/log/nginx/phl-play-vod-django-acc.log;
+  error_log  /var/log/nginx/phl-play-vod-django-err.log error;
+
+  root /www/projects/python/phl-play-vod-django/media;
+
+  location ~ ^/(.*)$ {
+    alias /www/projects/python/phl-play-vod-django/media/$1;
+    allow all;
+  }
+
+  add_header 'Access-Control-Allow-Origin' '*';
+}
+
+# redirect de outros dominios para o oficial philos.tv
+
+server {
+  listen 80;
+  server_name  www.philos.tv test.philos.tv;
+
+  access_log /var/log/nginx/phl-play-vod-django-acc.log;
+  error_log  /var/log/nginx/phl-play-vod-django-err.log error;
+
+  return 301 https://philos.tv$request_uri;
+}

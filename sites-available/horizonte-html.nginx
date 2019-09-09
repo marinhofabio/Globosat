@@ -1,0 +1,9 @@
+server {
+    listen 80;
+    server_name horizonte.tv.br;
+
+    access_log /var/log/nginx/horizonte-html-acc.log;
+    error_log  /var/log/nginx/horizonte-html-err.log error;
+
+    root /www/projects/html/horizonte-html;
+}

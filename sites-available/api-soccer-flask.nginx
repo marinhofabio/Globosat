@@ -1,0 +1,26 @@
+proxy_cache_path /dev/shm/nginx-api-soccer-flask levels=1:2 keys_zone=api-soccer-flask:10m;
+
+server {
+  listen 80;
+  server_name api-soccer.globosat.tv;
+
+  access_log /var/log/nginx/api-soccer-flask-acc.log;
+  error_log  /var/log/nginx/api-soccer-flask-err.log error;
+
+  location / {
+    proxy_cache api-soccer-flask;
+    proxy_cache_lock on;
+    proxy_cache_valid 200 10s;
+    proxy_cache_use_stale error updating http_500 http_502 http_503;
+
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host api-soccer-flask.gcloud.globoi.com;
+    proxy_redirect off;
+    proxy_buffering on;
+    proxy_pass_header ETag;
+    proxy_connect_timeout 600s;
+    proxy_read_timeout 600s;
+    proxy_pass http://api-soccer-flask.gcloud.globoi.com;
+    expires 60s;
+  }
+}

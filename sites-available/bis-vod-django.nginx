@@ -1,0 +1,12 @@
+server {
+  listen 80;
+  server_name maisbis.com.br www.maisbis.com.br;
+
+  error_log   /var/log/nginx/bis-vod-django-err.log error;
+  root        /www/projects/html/bis-vod-django;
+
+  location ~ ^/(.*)$ {
+    alias /www/projects/html/bis-vod-django/$1;
+    allow all;
+  }
+}

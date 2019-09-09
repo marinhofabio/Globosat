@@ -1,0 +1,38 @@
+server {
+  listen 80;
+  server_name rich-data.globosat.tv;
+
+  access_log  /var/log/nginx/svc-rich-data-rails-acc.log;
+  error_log   /var/log/nginx/svc-rich-data-rails-err.log error;
+
+  # root /www/projects/ruby/svc-rich-data-rails;
+
+  location / {
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host $http_host;
+    proxy_redirect off;
+    proxy_buffering on;
+    proxy_connect_timeout 60s;
+    proxy_read_timeout 60s;
+    proxy_pass http://gcloud.globoi.com;
+    expires 60s;
+  }
+
+  # location ~ ^/assets/(.*)$ {
+  #   alias /www/projects/ruby/svc-rich-data-rails/public/assets/$1;
+  #   allow all;
+  # }
+
+  # location ~ ^/images/(.*)$ {
+  #   alias /www/projects/ruby/svc-rich-data-rails/public/images/$1;
+  #   allow all;
+  # }
+
+  location /v1 {
+    return 404;
+  }
+
+  location /admin {
+    return 404;
+  }
+}

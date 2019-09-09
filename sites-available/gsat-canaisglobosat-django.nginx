@@ -1,0 +1,95 @@
+ server {
+   listen 80;
+   server_name canaisglobosat.globo.com globosat.globo.com;
+
+   access_log  /var/log/nginx/gsat-canaisglobosat-django-acc.log;
+   error_log   /var/log/nginx/gsat-canaisglobosat-django-err.log error;
+
+   root /www/projects/python/gsat-canaisglobosat-django;
+   
+   # Include para redirect #
+   include /etc/nginx/python-conf.d/redirect/canaisglobosat.redirect.conf;
+   
+   location / {
+     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+     proxy_set_header Host $http_host;
+     proxy_redirect off;
+     proxy_buffering on;
+     proxy_connect_timeout 30s;
+     proxy_read_timeout 30s;
+     proxy_pass http://gsatapp.globoi.com:8032;
+   }
+   # redirect para o novo site de carreiras #
+   location ~ ^/trabalheconosco {
+     return 301 https://carreiras.globosat.com.br;
+   } 
+   # redirect para o novo site de carreiras #
+   location ~ ^/carreiras {
+     return 301 https://carreiras.globosat.com.br;
+   } 
+   # redirect para o novo site de carreiras #
+   location ~ ^/vagas {
+     return 301 https://carreiras.globosat.com.br;
+   } 
+   
+   location ~ ^/static/(.*)$ {
+     alias /www/projects/python/gsat-canaisglobosat-django/static/$1;
+     allow all;
+   }
+
+   location ~ ^/media/(.*)$ {
+     alias /www/projects/python/gsat-canaisglobosat-django/media/$1;
+     allow all;
+   }
+  
+   location /robots.txt {
+     alias /www/projects/python/gsat-canaisglobosat-django/robots.prod.txt;
+   }     
+        
+   location /clientaccesspolicy.xml {
+     alias /www/projects/python/gsat-canaisglobosat-django/clientaccesspolicy.xml;
+   }
+   location ^~ /admin/ { # restrict access to admin section
+     return 404;
+   }
+
+   rewrite ^/grade_canais(.*) http://canaisglobosat.globo.com/ redirect;
+   rewrite ^/canais(.*) http://canaisglobosat.globo.com/ redirect;
+   rewrite ^/tv_por_assinatura(.*) http://canaisglobosat.globo.com/como-assinar redirect;
+   rewrite ^/produtoras(.*) http://produtoras.globosat.com.br/ redirect;
+   rewrite ^/guiademarcas(.*) http://extranet.aws.globosat.com.br/gmar redirect;
+   rewrite ^/index.php/fornecedores(.*) http://canaisglobosat.globo.com/fornecedores/ redirect;
+   rewrite ^/como-assinar(.*) http://canaisglobosat.globo.com/ redirect;
+}
+
+server {
+  listen 80;
+  server_name media.canaisglobosat.globo.com;
+
+   access_log  /var/log/nginx/gsat-canaisglobosat-django-acc.log;
+   error_log   /var/log/nginx/gsat-canaisglobosat-django-err.log error;
+
+  root /www/projects/python/gsat-canaisglobosat-django/media;
+
+  location ~ ^/(.*)$ {
+    alias /www/projects/python/gsat-canaisglobosat-django/media/$1;
+    allow all;
+  }
+  add_header 'Access-Control-Allow-Origin' '*';
+}
+
+server {
+  listen 80;
+  server_name static.canaisglobosat.globo.com;
+
+   access_log  /var/log/nginx/gsat-canaisglobosat-django-acc.log;
+   error_log   /var/log/nginx/gsat-canaisglobosat-django-err.log error;
+
+  root /www/projects/python/gsat-canaisglobosat-django/static;
+
+  location ~ ^/(.*)$ {
+    alias /www/projects/python/gsat-canaisglobosat-django/static/$1;
+    allow all;
+  }
+  add_header 'Access-Control-Allow-Origin' '*';
+}

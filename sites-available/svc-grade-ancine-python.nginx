@@ -1,0 +1,16 @@
+server {
+  listen 80;
+  server_name ancine.grade.globosat.tv ancine-grade.globosat.tv;
+
+  # access_log /var/log/nginx/svc-grade-ancine-python-acc.log;
+  error_log  /var/log/nginx/svc-grade-ancine-python-err.log error;
+
+  root /www/projects/python/svc-grade-ancine-python/static;
+
+  location ~ ^/(.*)$ {
+    alias /www/projects/python/svc-grade-ancine-python/static/$1;
+    allow all;
+  }
+
+  add_header 'Access-Control-Allow-Origin' '*';
+}

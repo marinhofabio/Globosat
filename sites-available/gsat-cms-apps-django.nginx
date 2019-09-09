@@ -1,0 +1,53 @@
+server {
+  listen 80;
+  server_name api.apps.globosat.tv cfapi.apps.globosat.tv api-apps.globosat.tv;
+
+  access_log /var/log/nginx/gsat-cms-apps-django-acc.log;
+  error_log /var/log/nginx/gsat-cms-apps-django-err.log error;
+
+  root /www/projects/python/gsat-cms-apps-django;
+
+  location /gloobplay {
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host $http_host;
+    proxy_redirect off;
+    proxy_buffering on;
+    proxy_connect_timeout 60s;
+    proxy_read_timeout 60s;
+    proxy_pass http://gsatapp.globoi.com:8016;
+    rewrite /gloobplay/(.*) /$1 break;
+    expires 300s;
+  }
+}
+
+server {
+  listen 80;
+  server_name media.apps.globosat.tv;
+
+  access_log /var/log/nginx/gsat-cms-apps-django-acc.log;
+  error_log /var/log/nginx/gsat-cms-apps-django-err.log error;
+
+  root /www/projects/python/gsat-cms-apps-django/media;
+
+  location ~ ^/(.*)$ {
+    alias /www/projects/python/gsat-cms-apps-django/media/$1;
+    allow all;
+    expires 3600s;
+  }
+}
+
+server {
+  listen 80;
+  server_name static.apps.globosat.tv;
+
+  access_log /var/log/nginx/gsat-cms-apps-django-acc.log;
+  error_log /var/log/nginx/gsat-cms-apps-django-err.log error;
+
+  root /www/projects/python/gsat-cms-apps-django/static;
+
+  location ~ ^/(.*)$ {
+    alias /www/projects/python/gsat-cms-apps-django/static/$1;
+    allow all;
+    expires 3600s;
+  }
+}

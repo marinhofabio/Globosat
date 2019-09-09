@@ -1,0 +1,73 @@
+server {
+  listen 80;
+  server_name ott.globosat.tv;
+
+  access_log /var/log/nginx/gsat-tvs-conectadas-django-acc.log;
+  error_log  /var/log/nginx/gsat-tvs-conectadas-django-err.log error;
+
+  root /www/projects/python/gsat-tvs-conectadas-django;
+
+  location / {
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host $http_host;
+    proxy_redirect off;
+    proxy_buffering on;
+    proxy_connect_timeout 120s;
+    proxy_read_timeout 120s;
+    proxy_pass http://gsatapp.globoi.com:8019;
+  }
+
+  location ~ ^/static/(.*)$ {
+    alias /www/projects/python/gsat-tvs-conectadas-django/static/$1;
+    allow all;
+  }
+
+  location ~ ^/media/(.*)$ {
+    alias /www/projects/python/gsat-tvs-conectadas-django/media/$1;
+    allow all;
+  }
+
+  location /robots.txt {
+    alias /www/projects/python/gsat-tvs-conectadas-django/robots.prod.txt;
+  }
+
+  location /clientaccesspolicy.xml {
+    alias /www/projects/python/gsat-tvs-conectadas-django/clientaccesspolicy.xml;
+  }
+
+  location ^~ /admin/ { # restrict access to admin section
+    return 404;
+  }
+}
+
+server {
+  listen 80;
+  server_name static.ott.globosat.tv static-ott.globosat.tv;
+  add_header 'Access-Control-Allow-Origin' '*';
+
+  access_log /var/log/nginx/gsat-tvs-conectadas-django-acc.log;
+  error_log  /var/log/nginx/gsat-tvs-conectadas-django-err.log error;
+
+  root /www/projects/python/gsat-tvs-conectadas-django/static;
+
+  location ~ ^/(.*)$ {
+    alias /www/projects/python/gsat-tvs-conectadas-django/static/$1;
+    allow all;
+  }
+}
+
+server {
+  listen 80;
+  server_name media.ott.globosat.tv;
+  add_header 'Access-Control-Allow-Origin' '*';
+
+  access_log /var/log/nginx/gsat-tvs-conectadas-django-acc.log;
+  error_log  /var/log/nginx/gsat-tvs-conectadas-django-err.log error;
+
+  root /www/projects/python/gsat-tvs-conectadas-django/media;
+
+  location ~ ^/(.*)$ {
+    alias /www/projects/python/gsat-tvs-conectadas-django/media/$1;
+    allow all;
+  }
+}

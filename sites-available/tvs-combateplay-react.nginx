@@ -1,0 +1,33 @@
+server {
+  listen 80;
+  server_name tvs-combateplay.globosat.tv;
+
+  access_log  /var/log/nginx/tvs-combateplay-react-acc.log;
+  error_log   /var/log/nginx/tvs-combateplay-react-err.log error;
+
+  root /www/projects/html/tvs-combateplay-react/build/;
+
+  location / {
+    try_files $uri $uri/ /index.html;
+  }
+}
+
+server {
+  listen 80;
+  server_name staging-tvs-combateplay.globosat.tv;
+
+  access_log  /var/log/nginx/tvs-combateplay-react-acc.log;
+  error_log   /var/log/nginx/tvs-combateplay-react-err.log error;
+
+  location / {
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host staging-tvs-combateplay.cloud.globoi.com;
+    proxy_redirect off;
+    proxy_buffering on;
+    proxy_pass_header ETag;
+    proxy_connect_timeout 600s;
+    proxy_read_timeout 600s;
+    proxy_pass http://staging-tvs-combateplay.cloud.globoi.com;
+    expires 60s;
+  }
+}

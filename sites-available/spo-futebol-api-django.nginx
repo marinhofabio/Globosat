@@ -1,0 +1,89 @@
+proxy_cache_path /dev/shm/nginx-spo-futebol-api-django levels=1:2 keys_zone=spo-futebol-api-django:10m;
+
+server {
+  listen 80;
+  server_name api.soccer.globosat.tv api.futebol.globosat.tv test-vip-ipv6-cache-api.globosat.tv;
+
+  access_log  /var/log/nginx/spo-futebol-api-django-acc.log;
+  error_log   /var/log/nginx/spo-futebol-api-django-err.log error;
+
+  root /www/projects/python/spo-futebol-api-django;
+
+  location / {
+    proxy_cache spo-futebol-api-django;
+    proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
+    proxy_cache_background_update on;
+    proxy_cache_valid 200 1s;
+    proxy_cache_lock on;
+    
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host $http_host;
+    proxy_redirect off;
+    proxy_buffering on;
+    proxy_connect_timeout 60s;
+    proxy_read_timeout 60s;
+    proxy_pass http://farm2.gsatapp.globoi.com:8022;
+    expires 120s;
+  }
+
+  location ~ ^/static/(.*)$ {
+    alias /www/projects/python/spo-futebol-api-django/static/$1;
+    allow all;
+    expires 1d;
+  }
+
+  location ~ ^/media/(.*)$ {
+    alias /www/projects/python/spo-futebol-api-django/media/$1;
+    allow all;
+    expires 1h;
+  }
+
+  location /robots.txt {
+    alias /www/projects/python/spo-futebol-api-django/robots.prod.txt;
+  }
+
+  location /clientaccesspolicy.xml {
+    alias /www/projects/python/spo-futebol-api-django/clientaccesspolicy.xml;
+  }
+
+  location ^~ /admin {
+    return 404;
+  }
+}
+
+server {
+  listen 80;
+  server_name media.api.soccer.globosat.tv media-api-soccer.globosat.tv media.api.futebol.globosat.tv;
+
+  access_log  /var/log/nginx/spo-futebol-api-django-acc.log;
+  error_log   /var/log/nginx/spo-futebol-api-django-err.log error;
+
+  root /www/projects/python/spo-futebol-api-django/media;
+
+  location ~ ^/(.*)$ {
+    alias /www/projects/python/spo-futebol-api-django/media/$1;
+    allow all;
+    expires 1h;
+  }
+
+  add_header 'Access-Control-Allow-Origin' '*';
+
+}
+
+server {
+  listen 80;
+  server_name static.api.soccer.globosat.tv static-api-soccer.globosat.tv static.api.futebol.globosat.tv;
+
+  access_log  /var/log/nginx/spo-futebol-api-django-acc.log;
+  error_log   /var/log/nginx/spo-futebol-api-django-err.log error;
+
+  root /www/projects/python/spo-futebol-api-django/static;
+
+  location ~ ^/(.*)$ {
+    alias /www/projects/python/spo-futebol-api-django/static/$1;
+    allow all;
+    expires 1d;
+  }
+
+  add_header 'Access-Control-Allow-Origin' '*';
+}

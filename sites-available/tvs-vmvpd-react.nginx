@@ -1,0 +1,13 @@
+server {
+  listen 80;
+  server_name vmvpd.video.globo.com tvs-vmvpd.globosat.tv;
+
+  access_log  /var/log/nginx/tvs-vmvpd-react-acc.log;
+  error_log   /var/log/nginx/tvs-vmvpd-react-err.log error;
+
+  root /www/projects/html/tvs-vmvpd-react/build/;
+
+  location / {
+    try_files $uri $uri/ /index.html;
+  }
+}

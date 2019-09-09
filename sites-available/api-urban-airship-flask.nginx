@@ -1,0 +1,18 @@
+server {
+  listen 80;
+  server_name api-urban-airship.globosat.tv;
+
+  access_log /var/log/nginx/api-urban-airship-flask-acc.log;
+  error_log  /var/log/nginx/api-urban-airship-flask-err.log error;
+
+  location / {
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host $http_host;
+    proxy_redirect off;
+    proxy_buffering on;
+    proxy_pass_header ETag;
+    proxy_connect_timeout 60s;
+    proxy_read_timeout 60s;
+    proxy_pass http://gcloud.globoi.com;
+  }
+}

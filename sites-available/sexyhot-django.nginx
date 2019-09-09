@@ -1,0 +1,46 @@
+server {
+  listen 80;
+  server_name sexyhot.globo.com;
+
+  access_log  /var/log/nginx/sexyhot-django-acc.log;
+  error_log   /var/log/nginx/sexyhot-django-err.log error;
+
+  add_header Vary X-Forwarded-Proto;
+
+  if ($http_x_forwarded_proto != 'https') {
+    return 301 https://$host$request_uri;
+  }
+
+  location / {
+    expires 0s;
+    proxy_read_timeout 30s;
+    proxy_connect_timeout 30s;
+    proxy_pass http://sexyhot-django.gcloud.globoi.com;
+  }
+
+  location ~ /((sexyhot|venus|playboy|sextreme)/programacao|_next) {
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host gsat-grade-react.gcloud.globoi.com;
+    proxy_redirect off;
+    proxy_buffering on;
+    proxy_pass_header ETag;
+    proxy_connect_timeout 60s;
+    proxy_read_timeout 60s;
+    proxy_pass http://gsat-grade-react.gcloud.globoi.com;
+    expires 60s;
+  }
+
+  location /admin {
+    return 404;
+  }
+}
+
+server {
+  listen 80;
+  server_name sexyhot.com.br sexyhot.globosat.tv sexyhotplay.com.br www.sexyhotplay.com.br www.sexyhot.com.br canalsexyhot.com.br www.canalsexyhot.com.br;
+
+  access_log  /var/log/nginx/sexyhot-django-acc.log;
+  error_log   /var/log/nginx/sexyhot-django-err.log error;
+
+  return 301 https://sexyhot.globo.com$request_uri;
+}

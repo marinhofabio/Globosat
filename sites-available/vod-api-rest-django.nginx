@@ -1,0 +1,173 @@
+server {
+    listen 80;
+    server_name cfapi.vod.globosat.tv api.vod.globosat.tv api-vod.globosat.tv;
+
+    access_log /var/log/nginx/vod-api-rest-django-acc;
+    error_log  /var/log/nginx/vod-api-rest-django-err error;
+
+    root /www/projects/python/vod-api-rest-django;
+
+    rewrite ^/telecineplay/lists/menu-degustacao-telecine-play(.*) http://api.vod.globosat.tv/telecineplay/lists/filmes-liberados redirect;
+
+    location /philos {
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_redirect off;
+        proxy_buffering off;
+        proxy_pass_header ETag;
+        proxy_pass_header Cache-Control;
+        proxy_connect_timeout 30s;
+        proxy_read_timeout 30s;
+        proxy_pass http://gsatapp.globoi.com:8007;
+        rewrite /philos/(.*) /$1 break;
+        expires 60s;
+    }
+
+    location /telecine {
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_redirect off;
+        proxy_buffering off;
+        proxy_pass_header ETag;
+        proxy_pass_header Cache-Control;
+        proxy_connect_timeout 30s;
+        proxy_read_timeout 30s;
+        proxy_pass http://gsatapp.globoi.com:8008;
+        rewrite /telecine/(.*) /$1 break;
+        expires 60s;
+    }
+
+    # desvio de rota para svc-playback-rails
+    location ^~ /globosatplay/playback {
+        try_files $uri @proxy_to_playback;
+    }
+
+    # desvio de rota para svc-deviceregistration-rails
+    location ^~ /globosatplay/ott {
+        try_files $uri @proxy_to_deviceregistration;
+    }
+    location ^~ /globosatplay/devices_registration {
+        try_files $uri @proxy_to_deviceregistration;
+    }
+
+    # desvio de rota para svc-experiencialogada-flask
+    location ^~ /globosatplay/user_info {
+        try_files $uri @proxy_to_xp_service;
+    }
+    location ^~ /globosatplay/language {
+        try_files $uri @proxy_to_xp_service;
+    }
+
+    location /globosatplay {
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_redirect off;
+        proxy_buffering off;
+        proxy_pass_header ETag;
+        proxy_pass_header Cache-Control;
+        proxy_connect_timeout 30s;
+        proxy_read_timeout 30s;
+        proxy_pass http://gsatapp.globoi.com:8010;
+        add_header 'Access-Control-Allow-Origin' '*';
+        add_header 'Access-Control-Allow-Methods' 'GET, OPTIONS, DELETE';
+        add_header 'Access-Control-Allow-Headers' 'Accept,Authorization,Cache-Control,Content-Type,DNT,If-Modified-Since,Keep-Alive,Origin,User-Agent,X-Mx-ReqToken,X-Requested-With';
+        add_header 'Access-Control-Expose-Headers' 'X-Total-Count,Link';
+        expires 60s;
+    }
+
+    location /philosplay {
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_redirect off;
+        proxy_buffering off;
+        proxy_pass_header ETag;
+        proxy_pass_header Cache-Control;
+        proxy_connect_timeout 30s;
+        proxy_read_timeout 30s;
+        proxy_pass http://gsatapp.globoi.com:8035;
+        add_header 'Access-Control-Allow-Origin' '*';
+        add_header 'Access-Control-Allow-Methods' 'GET, OPTIONS, DELETE';
+        add_header 'Access-Control-Allow-Headers' 'Accept,Authorization,Cache-Control,Content-Type,DNT,If-Modified-Since,Keep-Alive,Origin,User-Agent,X-Mx-ReqToken,X-Requested-With';
+        add_header 'Access-Control-Expose-Headers' 'X-Total-Count,Link';
+        expires 60s;
+    }
+
+    location /futuraplay {
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_redirect off;
+        proxy_buffering off;
+        proxy_pass_header ETag;
+        proxy_pass_header Cache-Control;
+        proxy_connect_timeout 30s;
+        proxy_read_timeout 30s;
+        proxy_pass http://gsatapp.globoi.com:8044;
+        expires 60s;
+    }
+
+    location /robots.txt {
+        alias /www/projects/python/vod-api-rest-django/robots.txt;
+    }
+
+    location /clientaccesspolicy.xml {
+        alias /www/projects/python/vod-api-rest-django/clientaccesspolicy.xml;
+    }
+
+    location /googlebc2262edc13703b3.html {
+        alias /www/globosat/gsat-hd-php/current/googlebc2262edc13703b3.html;
+    }
+
+    # svc-playback-rails
+    location @proxy_to_playback {
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host api-playback.globosat.tv;
+        proxy_redirect off;
+        proxy_buffering off;
+        proxy_pass_header ETag;
+        proxy_pass_header Cache-Control;
+        proxy_connect_timeout 30s;
+        proxy_read_timeout 30s;
+        proxy_pass http://gcloud.globoi.com;
+        expires 0s;
+    }
+
+    # svc-deviceregistration-rails
+    location @proxy_to_deviceregistration {
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host api-devices.globosat.tv;
+        proxy_redirect off;
+        proxy_buffering off;
+        proxy_pass_header ETag;
+        proxy_pass_header Cache-Control;
+        proxy_connect_timeout 30s;
+        proxy_read_timeout 30s;
+        proxy_pass http://gcloud.globoi.com;
+        expires 0s;
+    }
+
+    # svc-experiencialogada-flask
+    location @proxy_to_xp_service {
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host api-xp.globosat.tv;
+        proxy_redirect off;
+        proxy_buffering off;
+        proxy_pass_header ETag;
+        proxy_pass_header Cache-Control;
+        proxy_connect_timeout 30s;
+        proxy_read_timeout 30s;
+        proxy_pass http://gcloud.globoi.com;
+        expires 0s;
+    }
+
+    location ^~ /globosatplay/admin/ {
+        return 404;
+    }
+
+    location ^~ /philosplay/admin/ {
+        return 404;
+    }
+
+    location ^~ /futuraplay/admin/ {
+        return 404;
+    }
+}

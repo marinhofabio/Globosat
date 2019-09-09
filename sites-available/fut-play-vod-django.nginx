@@ -1,0 +1,77 @@
+server {
+  listen 80;
+  server_name futuraplay.org www.futuraplay.org;
+
+  access_log  /var/log/nginx/fut-play-vod-django-acc.log;
+  error_log   /var/log/nginx/fut-play-vod-django-err.log error;
+
+  root /www/projects/python/fut-play-vod-django;
+
+  location / {
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host $http_host;
+    proxy_redirect off;
+    proxy_buffering on;
+    proxy_connect_timeout 30s;
+    proxy_read_timeout 30s;
+    proxy_pass http://gsatapp.globoi.com:8024;
+  }
+
+  location ~ ^/static/(.*)$ {
+    alias /www/projects/python/fut-play-vod-django/static/$1;
+    allow all;
+  }
+
+  location ~ ^/media/(.*)$ {
+    alias /www/projects/python/fut-play-vod-django/media/$1;
+    allow all;
+  }
+
+  location /robots.txt {
+    alias /www/projects/python/fut-play-vod-django/robots.prod.txt;
+  }
+
+  location /clientaccesspolicy.xml {
+    alias /www/projects/python/fut-play-vod-django/clientaccesspolicy.xml;
+  }
+
+  location ^~ /admin/ { # restrict access to admin section
+    return 404;
+  }
+}
+
+# configuracoes para o site de estaticos #
+server {
+  listen 80;
+  server_name static.futuraplay.org;
+
+  access_log  /var/log/nginx/fut-play-vod-django-acc.log;
+  error_log   /var/log/nginx/fut-play-vod-django-err.log error;
+
+  root /www/projects/python/fut-play-vod-django/static;
+
+  location ~ ^/(.*)$ {
+      alias /www/projects/python/fut-play-vod-django/static/$1;
+      allow all;
+  }
+  
+  add_header 'Access-Control-Allow-Origin' '*';
+}
+
+# configuracoes para o site de media #
+server {
+  listen 80;
+  server_name media.futuraplay.org;
+
+  access_log  /var/log/nginx/fut-play-vod-django-acc.log;
+  error_log   /var/log/nginx/fut-play-vod-django-err.log error;
+
+  root /www/projects/python/fut-play-vod-django/media;
+
+  location ~ ^/(.*)$ {
+      alias /www/projects/python/fut-play-vod-django/media/$1;
+      allow all;
+  }
+
+  add_header 'Access-Control-Allow-Origin' '*';
+}

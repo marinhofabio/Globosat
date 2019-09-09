@@ -1,0 +1,14 @@
+server {
+    listen 80;
+    server_name g2c.tv.br;
+
+    access_log  /var/log/nginx/g2c-html-acc.log;
+    error_log   /var/log/nginx/g2c-html-err.log error;
+
+    root /www/projects/html/g2c-html;
+
+    location / {
+        index index.shtml;
+        ssi on;
+    }    
+}
