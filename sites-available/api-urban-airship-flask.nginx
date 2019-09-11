@@ -1,4 +1,5 @@
 server {
+
   listen 80;
   server_name api-urban-airship.globosat.tv;
 
@@ -16,3 +17,4 @@ server {
     proxy_pass http://gcloud.globoi.com;
   }
 }
+# vim: syntax=nginx 
