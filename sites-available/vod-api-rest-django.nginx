@@ -171,3 +171,4 @@ server {
         return 404;
     }
 }
+# vim: syntax=nginx
