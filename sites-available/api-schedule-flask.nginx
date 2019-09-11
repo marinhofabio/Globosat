@@ -26,3 +26,5 @@ server {
   add_header 'Access-Control-Allow-Headers' 'Accept,Authorization,Cache-Control,Content-Type,DNT,If-Modified-Since,Keep-Alive,Origin,User-Agent,X-Mx-ReqToken,X-Requested-With';
   add_header 'Access-Control-Expose-Headers' 'X-Total-Count,Link';
 }
+
+# vim: syntax=nginx 
