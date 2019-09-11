@@ -1,20 +1,20 @@
 server {
-    listen 80;
-    server_name player.globosat.tv;
+  listen 80;
+  server_name player.globosat.tv;
 
-    access_log /var/log/nginx/libs-html-acc.log;
-    error_log  /var/log/nginx/libs-html-err.log error;
+  access_log /var/log/nginx/libs-html-acc.log;
+  error_log  /var/log/nginx/libs-html-err.log error;
 
-    root /www/projects/html/libs-html/player;
+  root /www/projects/html/libs-html/player;
 }
 
 server {
-    listen 80;
-    server_name globosat.estaticos.tv.br;
+  listen 80;
+  server_name globosat.estaticos.tv.br;
 
-    access_log /var/log/nginx/libs-html-acc.log;
-    error_log  /var/log/nginx/libs-html-err.log error;
+  access_log /var/log/nginx/libs-html-acc.log;
+  error_log  /var/log/nginx/libs-html-err.log error;
 
-    root /www/projects/html/libs-html;
+  root /www/projects/html/libs-html;
 }
 # vim: syntax=nginx
