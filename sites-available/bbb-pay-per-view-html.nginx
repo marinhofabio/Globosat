@@ -1,9 +1,10 @@
 server {
-    listen 80;
-    server_name bbbpayperview.globo.com;
+  listen 80;
+  server_name bbbpayperview.globo.com;
 
-    access_log	/var/log/nginx/bbb-pay-per-view-html-acc.log;
-    error_log   /var/log/nginx/bbb-pay-per-view-html-err.log error;
+  access_log  /var/log/nginx/bbb-pay-per-view-html-acc.log;
+  error_log   /var/log/nginx/bbb-pay-per-view-html-err.log error;
 
-    root /www/projects/html/bbb-pay-per-view-html;
+  root /www/projects/html/bbb-pay-per-view-html;
 }
+# vim: syntax=nginx
