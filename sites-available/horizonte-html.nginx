@@ -7,3 +7,4 @@ server {
 
     root /www/projects/html/horizonte-html;
 }
+# vim: syntax=nginx
