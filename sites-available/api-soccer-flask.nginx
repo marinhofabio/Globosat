@@ -12,7 +12,6 @@ server {
     proxy_cache_lock on;
     proxy_cache_valid 200 10s;
     proxy_cache_use_stale error updating http_500 http_502 http_503;
-
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header Host api-soccer-flask.gcloud.globoi.com;
     proxy_redirect off;
@@ -24,3 +23,4 @@ server {
     expires 60s;
   }
 }
+# vim: syntax=nginx
