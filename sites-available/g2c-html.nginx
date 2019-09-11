@@ -12,4 +12,4 @@ server {
         ssi on;
     }    
 }
-# vim: syntax=nginx 
+
