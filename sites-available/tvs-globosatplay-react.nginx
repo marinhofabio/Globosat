@@ -31,3 +31,4 @@ server {
     expires 60s;
   }
 }
+# vim: syntax=nginx
