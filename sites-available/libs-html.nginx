@@ -17,3 +17,4 @@ server {
 
     root /www/projects/html/libs-html;
 }
+# vim: syntax=nginx
